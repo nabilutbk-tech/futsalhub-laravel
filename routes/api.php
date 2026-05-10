@@ -2,22 +2,39 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\FieldController;
-use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\FieldApiController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
-    Route::get('/fields', [FieldController::class, 'index']);
+// --- API UNTUK LOGIN (Mendapatkan Token) ---
+Route::post('/login', function (Request $request) {
+    $request->validate(['email' => 'required|email', 'password' => 'required']);
     
-    Route::middleware('can:is_admin')->group(function () {
-        Route::post('/fields', [FieldController::class, 'store']);
+    $user = User::where('email', $request->email)->first();
+    
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Email atau Password salah'], 401);
+    }
+
+    // Membuat Token Sanctum
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Login Sukses',
+        'access_token' => $token,
+        'token_type' => 'Bearer',
+    ]);
+});
+
+// --- API CRUD LAPANGAN (Digembok oleh Sanctum) ---
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Rute untuk mengecek profile user yang sedang login
+    Route::get('/user', function (Request $request) {
+        return response()->json($request->user());
     });
 
-    Route::post('/bookings', [BookingController::class, 'store']);
+    // Rute CRUD Field (Hanya bisa diakses kalau punya token)
+    Route::apiResource('fields', FieldApiController::class);
+    
 });

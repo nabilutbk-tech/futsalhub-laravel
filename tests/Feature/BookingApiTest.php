@@ -28,9 +28,10 @@ class BookingApiTest extends TestCase
         Booking::create([
             'user_id' => $user->id,
             'field_id' => $field->id,
-            'start_time' => $existingStartTime,
-            'end_time' => $existingEndTime,
-            'status' => 'confirmed'
+            'start_time' => '2026-05-11 10:00:00',
+            'end_time' => '2026-05-11 12:00:00',
+            'status' => 'confirmed',
+            'total_price' => 150000,  // <-- TAMBAHKAN BARIS INI
         ]);
 
         // 2. Format tanggal JSON Payload ke string standar SQL
