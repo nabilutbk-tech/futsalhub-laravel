@@ -35,5 +35,14 @@
                 {{ $slot }}
             </main>
         </div>
+        <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker Registered'))
+                .catch(err => console.error('Service Worker Error', err));
+        });
+    }
+</script>
     </body>
 </html>
