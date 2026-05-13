@@ -4,9 +4,6 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="manifest" href="{{ asset('manifest.json') }}">
-        <meta name="theme-color" content="#10b981">
-        <link rel="apple-touch-icon" href="{{ asset('images/icon-192x192.png') }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
